@@ -1,0 +1,22 @@
+[project]
+name = "4-docker-example"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+authors = [
+    { name = "Tymofii Okhrimenko", email = "tymofii.okh@gmail.com" }
+]
+requires-python = ">=3.12"
+dependencies = [
+    "fastapi[standard]>=0.116.1",
+    "torch>=2.8.0",
+    "transformers>=4.56.1",
+    "uvicorn[standard]>=0.35.0",
+]
+
+[project.scripts]
+4-docker-example = "4_docker_example:main"
+
+[build-system]
+requires = ["hatchling"]
+build-backend = "hatchling.build"
