@@ -14,9 +14,10 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 # Copy the whole project into the image
 COPY . /app
 
-# Install Python dependencies (simple version for homework)
+# Install Python dependencies (now including torch)
 RUN pip install --no-cache-dir --upgrade pip \
     && pip install --no-cache-dir \
+         torch \
          fastapi \
          uvicorn[standard] \
          transformers \
