@@ -6,30 +6,31 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-# Install minimal system dependencies (optional but good practice)
+# Install system dependencies
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy the whole project into the image
+# Copy project files
 COPY . /app
 
-# Install Python dependencies (now including torch)
+# Install Python dependencies:
+# 1) CPU-only PyTorch from official index
+# 2) FastAPI stack + transformers + HF hub
 RUN pip install --no-cache-dir --upgrade pip \
     && pip install --no-cache-dir \
+         --index-url https://download.pytorch.org/whl/cpu \
          torch \
+    && pip install --no-cache-dir \
          fastapi \
          uvicorn[standard] \
          transformers \
          huggingface_hub
 
 # Download the HuggingFace model at build time
-# This will create the `models/` folder and bake it into the image
 RUN python download_model.py
 
 # App listens on 8000
 EXPOSE 8000
 
-# Start FastAPI app as in the homework:
-#   fastapi dev --host 0.0.0.0 src/4_docker_example
 CMD ["fastapi", "dev", "--host", "0.0.0.0", "src/4_docker_example"]
