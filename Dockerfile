@@ -22,8 +22,8 @@ RUN pip install --no-cache-dir --upgrade pip \
          --index-url https://download.pytorch.org/whl/cpu \
          torch \
     && pip install --no-cache-dir \
-         fastapi \
-         uvicorn[standard] \
+         "fastapi[standard]" \
+         "uvicorn[standard]" \
          transformers \
          huggingface_hub
 
@@ -33,4 +33,5 @@ RUN python download_model.py
 # App listens on 8000
 EXPOSE 8000
 
+# Exactly as in homework: run FastAPI dev server
 CMD ["fastapi", "dev", "--host", "0.0.0.0", "src/4_docker_example"]
