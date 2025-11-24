@@ -6,17 +6,18 @@ ENV PYTHONDONTWRITEBYTECODE=1 \
 
 WORKDIR /app
 
-# Install system dependencies
+# Install system dependencies (needed e.g. for some Python packages to compile)
 RUN apt-get update && apt-get install -y --no-install-recommends \
     build-essential \
     && rm -rf /var/lib/apt/lists/*
 
-# Copy project files
-COPY . /app
+# 1️⃣ Copy dependency manifest(s) first – to use Docker layer cache for deps
+COPY pyproject.toml uv.lock ./
 
-# Install Python dependencies:
-# 1) CPU-only PyTorch from official index
-# 2) FastAPI stack + transformers + HF hub
+# 2️⃣ Install Python dependencies
+#    - CPU-only PyTorch from the official CPU index
+#    - FastAPI stack
+#    - Transformers + HuggingFace Hub
 RUN pip install --no-cache-dir --upgrade pip \
     && pip install --no-cache-dir \
          --index-url https://download.pytorch.org/whl/cpu \
@@ -27,7 +28,10 @@ RUN pip install --no-cache-dir --upgrade pip \
          transformers \
          huggingface_hub
 
-# Download the HuggingFace model at build time
+# 3️⃣ Copy the rest of the project files (code, src/, download_model.py, etc.)
+COPY . /app
+
+# 4️⃣ Download the HuggingFace model at build time
 RUN python download_model.py
 
 # App listens on 8000
